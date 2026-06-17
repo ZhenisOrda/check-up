@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ENERGY CHECK-UP — Анкета</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #0b0a09;
+  --bg-card:  #111009;
+  --bg-el:    #161410;
+  --gold:     #c8a84b;
+  --gold-br:  #dfc070;
+  --gold-dim: rgba(201,168,76,0.15);
+  --gold-bd:  rgba(201,168,76,0.28);
+  --cream:    #ede6d8;
+  --cream-2:  rgba(237,230,216,0.58);
+  --cream-3:  rgba(237,230,216,0.32);
+  --r:        14px;
+  --r-lg:     22px;
+  --ease:     cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--cream);
+  font-family:'Manrope',sans-serif;
+  font-size:16px;line-height:1.6;
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:0.5;
+}
+.shell{
+  min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:0 16px 60px;
+}
+.hdr{width:100%;max-width:560px;padding:36px 0 28px;text-align:center}
+.hdr-title{font-size:0.68rem;font-weight:800;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.hdr-sub{font-size:0.78rem;font-weight:500;color:var(--cream-3);letter-spacing:0.1em}
+.progress-wrap{width:100%;max-width:560px;margin-bottom:28px}
+.progress-label{display:flex;justify-content:space-between;font-size:0.7rem;font-weight:600;color:var(--cream-3);letter-spacing:0.06em;margin-bottom:8px}
+.progress-label span:last-child{color:var(--gold)}
+.progress-track{width:100%;height:3px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#b8922f,#dfc070);border-radius:100px;transition:width 0.4s var(--ease)}
+.card{width:100%;max-width:560px;background:var(--bg-el);border:1px solid var(--gold-bd);border-radius:var(--r-lg);padding:32px 24px 28px;box-shadow:0 0 48px rgba(201,168,76,0.06)}
+.q-num{font-size:0.65rem;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.q-text{font-size:clamp(1.05rem,4vw,1.25rem);font-weight:700;line-height:1.3;color:var(--cream);margin-bottom:24px}
+.q-hint{font-size:0.78rem;color:var(--cream-3);margin-top:-16px;margin-bottom:20px;line-height:1.5}
+.inp,.txa{
+  width:100%;background:var(--bg-card);border:1px solid var(--gold-bd);border-radius:var(--r);
+  color:var(--cream);font-family:'Manrope',sans-serif;font-size:1rem;font-weight:500;
+  padding:15px 16px;outline:none;-webkit-appearance:none;
+  transition:border-color 0.25s,box-shadow 0.25s;
+}
+.inp::placeholder,.txa::placeholder{color:var(--cream-3);font-size:0.9rem}
+.inp:focus,.txa:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12)}
+.inp.err{border-color:#c0605a;box-shadow:0 0 0 3px rgba(192,96,90,0.12)}
+.txa{resize:vertical;min-height:120px;line-height:1.6}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-label{
+  display:flex;align-items:center;gap:14px;
+  background:var(--bg-card);border:1px solid var(--gold-bd);border-radius:var(--r);
+  padding:14px 16px;cursor:pointer;
+  transition:border-color 0.22s,background 0.22s;
+  user-select:none;-webkit-user-select:none;
+}
+.opt-label:hover{border-color:var(--gold);background:var(--gold-dim)}
+.opt-label.selected{border-color:var(--gold);background:var(--gold-dim)}
+.opt-dot{
+  flex-shrink:0;width:20px;height:20px;
+  border:1.5px solid var(--gold-bd);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color 0.22s,background 0.22s;
+  pointer-events:none;
+}
+.opt-label.checkbox .opt-dot{border-radius:5px}
+.opt-label.selected .opt-dot{border-color:var(--gold);background:var(--gold)}
+.opt-label.selected .opt-dot::after{
+  content:'';width:8px;height:8px;background:#0b0a09;border-radius:50%;display:block;
+}
+.opt-label.checkbox.selected .opt-dot::after{
+  border-radius:0;width:10px;height:7px;background:transparent;
+  border-left:2px solid #0b0a09;border-bottom:2px solid #0b0a09;
+  transform:rotate(-45deg) translate(1px,-1px);
+}
+.opt-text{font-size:0.92rem;font-weight:500;color:var(--cream);pointer-events:none}
+.sliders{display:flex;flex-direction:column;gap:20px}
+.slider-label-row{display:flex;justify-content:space-between;margin-bottom:8px}
+.slider-name{font-size:0.85rem;font-weight:600;color:var(--cream)}
+.slider-val{font-size:0.85rem;font-weight:800;color:var(--gold);min-width:20px;text-align:right}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;
+  background:rgba(255,255,255,0.08);border-radius:100px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+  background:var(--gold);border:2px solid #0b0a09;
+  box-shadow:0 0 10px rgba(201,168,76,0.4);cursor:pointer;
+}
+input[type=range]::-moz-range-thumb{
+  width:22px;height:22px;border-radius:50%;background:var(--gold);
+  border:2px solid #0b0a09;cursor:pointer;
+}
+.slider-ends{display:flex;justify-content:space-between;margin-top:5px;font-size:0.65rem;color:var(--cream-3)}
+.nav{display:flex;gap:10px;margin-top:28px}
+.btn-back{
+  flex-shrink:0;background:transparent;border:1px solid var(--gold-bd);border-radius:var(--r);
+  color:var(--cream-2);font-family:'Manrope',sans-serif;font-size:0.88rem;font-weight:600;
+  padding:14px 20px;cursor:pointer;transition:border-color 0.22s,color 0.22s;
+}
+.btn-back:hover{border-color:var(--gold);color:var(--cream)}
+.btn-next{
+  flex:1;background:linear-gradient(120deg,#b8922f 0%,#dfc070 55%,#b8922f 100%);
+  background-size:200% auto;border:none;border-radius:var(--r);
+  color:#080706;font-family:'Manrope',sans-serif;font-size:0.92rem;font-weight:800;
+  letter-spacing:0.05em;padding:15px 24px;cursor:pointer;
+  transition:background-position 0.45s var(--ease),box-shadow 0.25s,transform 0.12s;
+}
+.btn-next:hover{background-position:right center;box-shadow:0 6px 28px rgba(201,168,76,0.32)}
+.btn-next:active{transform:scale(0.975)}
+.err-msg{font-size:0.73rem;color:#d97070;margin-top:8px;display:none}
+.err-msg.show{display:block}
+.confirm{
+  width:100%;max-width:560px;background:var(--bg-el);border:1px solid var(--gold-bd);
+  border-radius:var(--r-lg);padding:48px 28px 44px;text-align:center;
+  box-shadow:0 0 60px rgba(201,168,76,0.08);display:none;
+}
+.confirm.show{display:block}
+.confirm-icon{font-size:2.8rem;margin-bottom:20px}
+.confirm-title{font-size:clamp(1.4rem,5vw,1.9rem);font-weight:800;color:var(--cream);line-height:1.2;margin-bottom:12px}
+.confirm-sub{font-size:0.88rem;color:var(--cream-2);line-height:1.7}
+.card.animate-in{animation:slideIn 0.32s var(--ease) both}
+@keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(min-width:600px){
+  .card{padding:40px 36px 34px}
+  .confirm{padding:60px 48px 56px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="hdr">
+    <div class="hdr-title">ENERGY CHECK-UP</div>
+    <div class="hdr-sub">Алдын ала іріктеу анкетасы</div>
+  </div>
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label">
+      <span id="stepLabel">Шаг 1 из 17</span>
+      <span id="stepPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="card" id="card"></div>
+  <div class="confirm" id="confirmScreen">
+    <div class="confirm-icon">✦</div>
+    <h2 class="confirm-title">Анкетаңыз қабылданды</h2>
+    <p class="confirm-sub">Менеджер сізбен жақын арада байланысады.</p>
+  </div>
+</div>
+
+<script>
+// INSERT GOOGLE APPS SCRIPT URL HERE
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzau-fFC2nrkM1aAi5y7oWYUaseVjCTUA9Zqwg_ODIi9wQ2UVedm7Fglgw_LlmMpoQa/exec';
+
+/* ============================================================
+   QUESTIONS — 17 шагов (шаг 1 = телефон, далее 16 вопросов)
+============================================================ */
+const QUESTIONS = [
+
+  /* Q1 — телефон (новый первый шаг) */
+  {
+    id:          'phone',
+    type:        'phone',
+    text:        'Телефон нөміріңіз',
+    hint:        'Қазақстандық нөмір форматында енгізіңіз',
+    placeholder: '+7 (777) 777-77-77',
+  },
+
+  /* Q2 */ { id:'name',         type:'text',     text:'Аты-жөніңіз',                                                                        placeholder:'Толық аты-жөніңізді енгізіңіз' },
+  /* Q3 */ { id:'age',          type:'number',   text:'Жасыңыз',                                                                            placeholder:'Мысалы: 35' },
+  /* Q4 */ { id:'city',         type:'text',     text:'Қай қалада тұрасыз?',                                                                placeholder:'Қала атауы' },
+  /* Q5 */ { id:'family',       type:'radio',    text:'Отбасылық жағдайыңыз',                                                               options:['Бойдақ','Үйленген','Ажырасқан','Жесір'] },
+  /* Q6 */ { id:'occupation',   type:'text',     text:'Қазіргі негізгі кәсібіңіз қандай?',                                                 placeholder:'Мамандығыңызды жазыңыз' },
+  /* Q7 */ { id:'concerns',     type:'checkbox', text:'Өміріңіздің қай саласы сізді көбірек мазалайды?',                                   options:['Денсаулық','Отбасы','Қаржы','Бизнес','Жеке даму','Рухани жағдай'] },
+  /* Q8 */ { id:'feeling',      type:'radio',    text:'Соңғы 6 айда өзіңізді қалай сезініп жүрсіз?',                                      options:['Қуатты','Шаршаңқы','Күйзелісте','Мақсатсыз','Тұрақсыз','Өмірден ләззат алмаймын'] },
+  /* Q9 */ { id:'situation',    type:'radio',    text:'Қайсысы сізге көбірек сәйкес келеді?',                                              options:['Ақша бар, бірақ тыныштық жоқ','Отбасы бар, бірақ бақыт жоқ','Бизнес бар, бірақ жігер жоқ','Мақсатым бар, бірақ әрекет жоқ','Не қалайтынымды түсінбеймін'] },
+  /* Q10 */{ id:'scores',       type:'sliders',  text:'Қазіргі жағдайыңызды 10 балдық шкаламен бағалаңыз',                                 sliders:[{id:'energy',label:'Энергия деңгейі'},{id:'family_score',label:'Отбасы'},{id:'finance',label:'Қаржы'},{id:'health',label:'Денсаулық'},{id:'satisfaction',label:'Өмірден қанағаттану'}] },
+  /* Q11 */{ id:'sleep',        type:'radio',    text:'Түнгі ұйқыңыз қандай?',                                                             options:['Өте жақсы','Орташа','Жиі оянамын','Ұйықтай алмаймын'] },
+  /* Q12 */{ id:'main_problem', type:'textarea', text:'Қайталанып келе жатқан ең үлкен мәселеңіз қандай?',                                placeholder:'Егжей-тегжейлі жазыңыз…' },
+  /* Q13 */{ id:'future',       type:'textarea', text:'Егер ештеңе өзгермесе, 3 жылдан кейін өміріңіз қандай болады деп ойлайсыз?',       placeholder:'Ойыңызды ашық жазыңыз…' },
+  /* Q14 */{ id:'expectation',  type:'textarea', text:'Сіз бұл кездесуден қандай нәтиже күтесіз?',                                        placeholder:'Күтетін нәтижелеріңізді жазыңыз…' },
+  /* Q15 */{ id:'why_now',      type:'textarea', text:'Неліктен дәл қазір өзгеруге шешім қабылдадыңыз?',                                  placeholder:'Себебін жазыңыз…' },
+  /* Q16 */{ id:'ready_almaty', type:'radio',    text:'ENERGY CHECK-UP бағдарламасына шақырылсаңыз, Алматыға келуге дайынсыз ба?',         options:['Иә','Жоқ'] },
+  /* Q17 */{ id:'consent',      type:'radio',    text:'Жеке қабылдауға іріктеуден өтсеңіз, менеджердің хабарласуына келісесіз бе?',       options:['Иә'] },
+
+];
+
+const TOTAL = QUESTIONS.length; // 17
+
+/* ============================================================
+   STATE
+============================================================ */
+let current = 0;
+const answers = {};
+
+const card         = document.getElementById('card');
+const confirmScr   = document.getElementById('confirmScreen');
+const progressFill = document.getElementById('progressFill');
+const stepLabel    = document.getElementById('stepLabel');
+const stepPct      = document.getElementById('stepPct');
+const progressWrap = document.getElementById('progressWrap');
+
+/* ============================================================
+   RENDER
+============================================================ */
+function render() {
+  if (current >= TOTAL) { showConfirm(); return; }
+
+  var pct = Math.round((current / TOTAL) * 100);
+  progressFill.style.width = pct + '%';
+  stepLabel.textContent = 'Шаг ' + (current + 1) + ' из ' + TOTAL;
+  stepPct.textContent = pct + '%';
+
+  var q = QUESTIONS[current];
+  card.innerHTML = buildHTML(q);
+  card.classList.remove('animate-in');
+  void card.offsetWidth;
+  card.classList.add('animate-in');
+
+  // init phone mask
+  if (q.type === 'phone') {
+    var inp = document.getElementById('inp_phone');
+    inp.addEventListener('input', applyPhoneMask);
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') goNext(); });
+    if (answers['phone']) inp.value = answers['phone'];
+  }
+
+  // init sliders
+  if (q.type === 'sliders') {
+    q.sliders.forEach(function(s) {
+      var inp = document.getElementById('sl_' + s.id);
+      var valEl = document.getElementById('val_' + s.id);
+      var saved = ((answers[q.id] || {})[s.label]) || 5;
+      inp.value = saved;
+      valEl.textContent = saved;
+      setSliderBg(inp);
+      inp.addEventListener('input', function() {
+        valEl.textContent = inp.value;
+        setSliderBg(inp);
+      });
+    });
+  }
+
+  // restore checkbox
+  if (q.type === 'checkbox') {
+    var saved = answers[q.id] || [];
+    card.querySelectorAll('.opt-label').forEach(function(lbl) {
+      if (saved.indexOf(lbl.getAttribute('data-value')) !== -1) lbl.classList.add('selected');
+    });
+  }
+
+  // restore radio
+  if (q.type === 'radio') {
+    var saved = answers[q.id];
+    if (saved) {
+      card.querySelectorAll('.opt-label').forEach(function(lbl) {
+        if (lbl.getAttribute('data-value') === saved) lbl.classList.add('selected');
+      });
+    }
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setSliderBg(inp) {
+  var pct = ((inp.value - 1) / 9) * 100;
+  inp.style.background = 'linear-gradient(to right, #c8a84b ' + pct + '%, rgba(255,255,255,0.08) ' + pct + '%)';
+}
+
+/* ============================================================
+   PHONE MASK
+============================================================ */
+function applyPhoneMask() {
+  var inp = document.getElementById('inp_phone');
+  var raw = inp.value.replace(/\D/g, '');
+  if (raw.startsWith('8')) raw = '7' + raw.slice(1);
+  if (raw.length > 0 && !raw.startsWith('7')) raw = '7' + raw;
+  raw = raw.slice(0, 11);
+  if (raw.length === 0) { inp.value = ''; return; }
+  var out = '+7';
+  if (raw.length > 1) out += ' (' + raw.slice(1, Math.min(raw.length, 4));
+  if (raw.length >= 4) out += ') ' + raw.slice(4, Math.min(raw.length, 7));
+  if (raw.length >= 7) out += '-' + raw.slice(7, Math.min(raw.length, 9));
+  if (raw.length >= 9) out += '-' + raw.slice(9, 11);
+  inp.value = out;
+  inp.classList.remove('err');
+  var errEl = document.getElementById('err_phone');
+  if (errEl) errEl.classList.remove('show');
+}
+
+function getPhoneDigits() {
+  var inp = document.getElementById('inp_phone');
+  return inp ? inp.value.replace(/\D/g, '') : '';
+}
+
+function isValidPhone() {
+  return /^7\d{10}$/.test(getPhoneDigits());
+}
+
+/* ============================================================
+   BUILD HTML
+============================================================ */
+function buildHTML(q) {
+  var html = '<div class="q-num">Сұрақ ' + (current + 1) + ' / ' + TOTAL + '</div>';
+  html += '<div class="q-text">' + q.text + '</div>';
+  if (q.hint) html += '<div class="q-hint">' + q.hint + '</div>';
+
+  if (q.type === 'phone') {
+    html += '<input class="inp" id="inp_phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="18" placeholder="' + q.placeholder + '"/>';
+    html += '<div class="err-msg" id="err_phone">Дұрыс нөмір енгізіңіз: +7 (777) 777-77-77</div>';
+  }
+
+  else if (q.type === 'text') {
+    var v = answers[q.id] || '';
+    html += '<input class="inp" id="inp_' + q.id + '" type="text" placeholder="' + q.placeholder + '" value="' + esc(v) + '" autocomplete="off"/>';
+    html += '<div class="err-msg" id="err_' + q.id + '">Бұл өрісті толтырыңыз</div>';
+  }
+
+  else if (q.type === 'number') {
+    var v = answers[q.id] || '';
+    html += '<input class="inp" id="inp_' + q.id + '" type="number" placeholder="' + q.placeholder + '" value="' + esc(v) + '" min="1" max="120"/>';
+    html += '<div class="err-msg" id="err_' + q.id + '">Жасыңызды енгізіңіз</div>';
+  }
+
+  else if (q.type === 'textarea') {
+    var v = answers[q.id] || '';
+    html += '<textarea class="txa" id="inp_' + q.id + '" placeholder="' + q.placeholder + '">' + esc(v) + '</textarea>';
+    html += '<div class="err-msg" id="err_' + q.id + '">Бұл өрісті толтырыңыз</div>';
+  }
+
+  else if (q.type === 'radio') {
+    html += '<div class="options">';
+    q.options.forEach(function(opt) {
+      html += '<div class="opt-label" data-value="' + esc(opt) + '" onclick="pickRadio(this,\'' + q.id + '\')">'
+            + '<span class="opt-dot"></span>'
+            + '<span class="opt-text">' + opt + '</span>'
+            + '</div>';
+    });
+    html += '</div>';
+    html += '<div class="err-msg" id="err_' + q.id + '">Жауапты таңдаңыз</div>';
+  }
+
+  else if (q.type === 'checkbox') {
+    html += '<div class="options">';
+    q.options.forEach(function(opt) {
+      html += '<div class="opt-label checkbox" data-value="' + esc(opt) + '" onclick="pickCheck(this,\'' + q.id + '\')">'
+            + '<span class="opt-dot"></span>'
+            + '<span class="opt-text">' + opt + '</span>'
+            + '</div>';
+    });
+    html += '</div>';
+    html += '<div class="err-msg" id="err_' + q.id + '">Кем дегенде біреуін таңдаңыз</div>';
+  }
+
+  else if (q.type === 'sliders') {
+    html += '<div class="sliders">';
+    q.sliders.forEach(function(s) {
+      html += '<div>'
+            + '<div class="slider-label-row">'
+            + '<span class="slider-name">' + s.label + '</span>'
+            + '<span class="slider-val" id="val_' + s.id + '">5</span>'
+            + '</div>'
+            + '<input type="range" id="sl_' + s.id + '" min="1" max="10" value="5"/>'
+            + '<div class="slider-ends"><span>1</span><span>10</span></div>'
+            + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="nav">';
+  if (current > 0) html += '<button class="btn-back" onclick="goBack()">← Артқа</button>';
+  var isLast = current === TOTAL - 1;
+  html += '<button class="btn-next" onclick="goNext()">' + (isLast ? 'Анкетаны жіберу →' : 'Келесі →') + '</button>';
+  html += '</div>';
+
+  return html;
+}
+
+/* ============================================================
+   OPTION HANDLERS
+============================================================ */
+function pickRadio(el, qid) {
+  card.querySelectorAll('.opt-label').forEach(function(l) { l.classList.remove('selected'); });
+  el.classList.add('selected');
+  var errEl = document.getElementById('err_' + qid);
+  if (errEl) errEl.classList.remove('show');
+}
+
+function pickCheck(el, qid) {
+  el.classList.toggle('selected');
+  var errEl = document.getElementById('err_' + qid);
+  if (errEl) errEl.classList.remove('show');
+}
+
+/* ============================================================
+   VALIDATE & SAVE
+============================================================ */
+function validate() {
+  var q = QUESTIONS[current];
+  var errEl = document.getElementById('err_' + q.id);
+
+  if (q.type === 'phone') {
+    if (!isValidPhone()) {
+      document.getElementById('inp_phone').classList.add('err');
+      if (errEl) errEl.classList.add('show');
+      return false;
+    }
+    answers['phone'] = '+' + getPhoneDigits();
+    return true;
+  }
+
+  if (q.type === 'text' || q.type === 'number') {
+    var v = document.getElementById('inp_' + q.id).value.trim();
+    if (!v) { if (errEl) errEl.classList.add('show'); return false; }
+    answers[q.id] = v;
+    return true;
+  }
+
+  if (q.type === 'textarea') {
+    var v = document.getElementById('inp_' + q.id).value.trim();
+    if (!v) { if (errEl) errEl.classList.add('show'); return false; }
+    answers[q.id] = v;
+    return true;
+  }
+
+  if (q.type === 'radio') {
+    var sel = card.querySelector('.opt-label.selected');
+    if (!sel) { if (errEl) errEl.classList.add('show'); return false; }
+    answers[q.id] = sel.getAttribute('data-value');
+    return true;
+  }
+
+  if (q.type === 'checkbox') {
+    var sels = card.querySelectorAll('.opt-label.selected');
+    if (!sels.length) { if (errEl) errEl.classList.add('show'); return false; }
+    answers[q.id] = Array.from(sels).map(function(l) { return l.getAttribute('data-value'); });
+    return true;
+  }
+
+  if (q.type === 'sliders') {
+    var obj = {};
+    q.sliders.forEach(function(s) {
+      obj[s.label] = Number(document.getElementById('sl_' + s.id).value);
+    });
+    answers[q.id] = obj;
+    return true;
+  }
+
+  return true;
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+function goNext() {
+  if (!validate()) return;
+  current++;
+  render();
+}
+
+function goBack() {
+  current--;
+  render();
+}
+
+/* ============================================================
+   SUBMIT
+============================================================ */
+function showConfirm() {
+  card.style.display = 'none';
+  progressWrap.style.display = 'none';
+  confirmScr.classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  var payload = {};
+
+  // phone first
+  payload['Телефон'] = answers['phone'] || '';
+
+  // rest of questions
+  QUESTIONS.forEach(function(q) {
+    if (q.id === 'phone') return; // already added
+    var a = answers[q.id];
+    if (q.type === 'sliders' && a) {
+      Object.keys(a).forEach(function(k) { payload[k] = a[k]; });
+    } else if (Array.isArray(a)) {
+      payload[q.text] = a.join(', ');
+    } else {
+      payload[q.text] = a || '';
+    }
+  });
+
+  payload['Жіберілген уақыт'] = new Date().toLocaleString('ru-RU', { timeZone: 'Asia/Almaty' });
+
+  if (WEBHOOK_URL) {
+    fetch(WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(payload),
+    }).catch(function() {});
+  }
+}
+
+/* ============================================================
+   UTILS
+============================================================ */
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* INIT */
+render();
+</script>
+</body>
+</html>
